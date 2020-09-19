@@ -2,13 +2,14 @@ const express = require('express')
 const app = express()
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
-const { v4: uuidV4 } = require('uuid')
+    // const { v4: uuidV4 } = require('uuid')
 
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
 
 app.get('/', (req, res) => {
-    res.render('home', { roomId: `/${uuidV4()}` })
+    // res.render('home', { roomId: `/${uuidV4()}` })
+    res.render('home', { roomId: genRoomId() })
 })
 
 app.get('/:room', (req, res) => {
@@ -34,3 +35,14 @@ io.on('connection', socket => {
 
 server.listen(3000)
 console.log("Listening")
+
+//generate random RoomID
+function genRoomId() {
+    let result = '';
+    const characters = 'abcdefghijklmnopqrstuvwxyz';
+    const charactersLength = characters.length;
+    for (let i = 0; i < 5; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}

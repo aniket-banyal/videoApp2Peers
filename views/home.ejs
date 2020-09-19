@@ -6,24 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Home</title>
-
-
 </head>
+<script>
+    //this needs to be here because we can access it through ejs here only
+    const ROOM_ID = "<%= roomId %>"
+</script>
 
 <body>
     <form id='form' method="GET">
-        <input type="text" placeholder="Name" name="user">
-        <button> New Meeting </button>
+        <input id='nameInp' type="text" placeholder="Name" name="user">
+        <button disabled id='newMeetingBtn'> New Meeting </button>
+        <input id='roomInp' type="text" placeholder="Room Id" name="room">
+        <button disabled id='joinMeetingBtn'> Join Meeting </button>
     </form>
 
-    <!-- <form id='form'>
-        <button> New Meeting </button>
-    </form> -->
+    <script src="home.js"></script>
 </body>
-<script>
-    const ROOM_ID = "<%= roomId %>"
-    const form = document.querySelector("#form");
-    form.action = ROOM_ID;
-</script>
 
 </html>
