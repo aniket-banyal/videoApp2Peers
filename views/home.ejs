@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home</title>
+
+
+</head>
+
+<body>
+    <form id='form' method="GET">
+        <input type="text" placeholder="Name" name="user">
+        <button> New Meeting </button>
+    </form>
+
+    <!-- <form id='form'>
+        <button> New Meeting </button>
+    </form> -->
+</body>
+<script>
+    const ROOM_ID = "<%= roomId %>"
+    const form = document.querySelector("#form");
+    form.action = ROOM_ID;
+</script>
+
+</html>
