@@ -15,8 +15,7 @@ joinMeetingBtn.addEventListener('click', () => {
 
 let isName = false;
 nameInp.oninput = () => {
-    console.log('h', nameInp.value);
-    if (nameInp.value != '') {
+    if (nameInp.value !== '') {
         newMeetingBtn.disabled = false;
         isName = true;
     } else if (nameInp.value == '') {
@@ -25,9 +24,9 @@ nameInp.oninput = () => {
     }
 
 
-    if (roomInp.value != '' && isName && roomInp.value.length == 5) {
+    if (roomInp.value !== '' && isName && roomInp.value.length == 5) {
         joinMeetingBtn.disabled = false;
-    } else if (roomInp.value == '' || !isName) {
+    } else if (roomInp.value == '' || !isName || roomInp.value.length !== 5) {
         joinMeetingBtn.disabled = true;
     }
 
@@ -35,9 +34,9 @@ nameInp.oninput = () => {
 
 
 roomInp.oninput = () => {
-    if (roomInp.value != '' && isName && roomInp.value.length == 5) {
+    if (roomInp.value !== '' && isName && roomInp.value.length == 5) {
         joinMeetingBtn.disabled = false;
-    } else if (roomInp.value == '' || !isName) {
+    } else if (roomInp.value == '' || !isName || roomInp.value.length !== 5) {
         joinMeetingBtn.disabled = true;
     }
 }

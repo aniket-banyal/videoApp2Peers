@@ -10,28 +10,17 @@
     </script>
     <script defer src="https://unpkg.com/peerjs@1.2.0/dist/peerjs.min.js"></script>
     <script src="/socket.io/socket.io.js" defer></script>
-    <script src="room.js" defer></script>
+    <script src="js/room.js" defer></script>
     <title>Document</title>
-    <style>
-        #video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, 300px);
-            grid-auto-rows: 300px;
-            grid-gap: 50px;
-        }
-        
-        video {
-            width: 80%;
-            height: 80%;
-            object-fit: cover;
-        }
-    </style>
+    <link rel="stylesheet" href="css/room.css">
 </head>
 
 <body>
     <div id="video-grid"></div>
-    <button id='videoBtn'>Hide Video</button>
-    <button id='audioBtn'>Stop Mic</button>
+    <div class='controls'>
+        <button id='videoBtn'>Hide Video</button>
+        <button id='audioBtn'>Stop Mic</button>
+    </div>
 </body>
 
 </html>
