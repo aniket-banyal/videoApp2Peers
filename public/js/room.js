@@ -7,12 +7,15 @@ const myPeer = new Peer(undefined, {
 
 const videoBtn = document.querySelector('#videoBtn');
 const audioBtn = document.querySelector('#audioBtn');
+const shareScreenBtn = document.querySelector('#shareScreen');
 
 const peers = {}
 
 const url_string = window.location.href
 const url = new URL(url_string);
 const myUserName = url.searchParams.get("user");
+
+let otherUserId;
 
 navigator.mediaDevices.getUserMedia({
     video: true,
@@ -21,6 +24,7 @@ navigator.mediaDevices.getUserMedia({
 
     //connect to new user whose id is userId and send ur stream
     socket.on('user-connected', (userId, userName) => {
+        otherUserId = userId
         connectToNewUser(userId, stream, userName)
     })
 
@@ -54,29 +58,32 @@ navigator.mediaDevices.getUserMedia({
     //receive userName when someone connects to u
     let userName;
     myPeer.on('connection', conn => {
-        conn.on('data', name => {
-            userName = name
+        conn.on('data', data => {
+            userName = data['userName']
+            otherUserId = data['id']
+        })
+    })
 
-            //when someone calls, we answer them and send our stream
-            myPeer.on('call', call => {
-                call.answer(stream)
-                const { video, nameH, div } = createDiv()
+    //when someone calls, we answer them and send our stream
+    myPeer.on('call', call => {
+        console.log('called');
+        call.answer(stream)
+        const { video, nameH, div } = createDiv()
 
-                // when caller send its stream add it to receivers ui
-                call.on('stream', userVideoStream => {
-                    addVideoStream(video, userVideoStream, nameH, userName, div)
-                })
-                call.on('close', () => {
-                    div.remove()
-                })
-            })
+        // when caller send its stream add it to receivers ui
+        call.on('stream', userVideoStream => {
+            addVideoStream(video, userVideoStream, nameH, userName, div)
+        })
+        call.on('close', () => {
+            div.remove()
         })
     })
 })
 
-
+let myUserId
 myPeer.on('open', id => {
     socket.emit('join-room', ROOM_ID, id, myUserName)
+    myUserId = id
 })
 
 socket.on('user-disconnected', userId => {
@@ -90,7 +97,7 @@ function connectToNewUser(userId, stream, userName) {
     const conn = myPeer.connect(userId)
     let call
     conn.on('open', () => {
-        conn.send(myUserName);
+        conn.send({ id: myUserId, userName: myUserName });
         //call the new user and send your stream
         call = myPeer.call(userId, stream);
         const { video, nameH, div } = createDiv()
@@ -128,3 +135,20 @@ function addVideoStream(video, stream, nameH, userName, div) {
     nameH.innerHTML = userName
     videoGrid.append(div);
 }
+
+shareScreenBtn.addEventListener('click', () => {
+    shareScreen()
+})
+
+async function shareScreen() {
+    let captureStream = null;
+
+    try {
+        captureStream = await navigator.mediaDevices.getDisplayMedia();
+    } catch (err) {
+        console.error("Error: " + err);
+    }
+    // connectToNewUser(myUserId, captureStream);
+    console.log(otherUserId);
+    myPeer.call(otherUserId, captureStream);
+};
