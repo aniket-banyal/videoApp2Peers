@@ -23,6 +23,18 @@ video {
     /* object-fit: cover; */
 }
 
+#peerVideo {
+    position: relative;
+}
+
+#peerVideo h1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+}
+
 .name {
     font-weight: 100;
 }
@@ -38,6 +50,6 @@ video {
 }
 
 .controls button {
-    height: 50px;
-    width: 100px;
+    height: 40px;
+    width: 90px;
 }
