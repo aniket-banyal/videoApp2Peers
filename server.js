@@ -13,14 +13,13 @@ app.get('/', (req, res) => {
 })
 
 app.get('/:room', (req, res) => {
-    res.render('room', { roomId: req.params.room })
+    res.render('room', { roomId: req.params.room, myVideoOn: req.query.video })
 })
 
 //when a connnection is made to the server by client
 io.on('connection', socket => {
     //when "join-room event is emitted"
     socket.on('join-room', (roomId, userId, userName) => {
-
         //join to that particular room
         socket.join(roomId)
 

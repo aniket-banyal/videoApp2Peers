@@ -30,9 +30,13 @@
     </div>
 
     <div class='controls'>
-        <button id='videoBtn'>Hide Video</button>
-        <button id='audioBtn'>Stop Mic</button>
-        <button id='shareScreen'>Share Screen</button>
+        <% if(myVideoOn) {%>
+            <button id='videoBtn'> Hide Video </button>
+            <% }else{ %>
+                <button id='videoBtn'> Show Video </button>
+                <% } %>
+                    <button id='audioBtn'>Stop Mic</button>
+                    <button id='shareScreen'>Share Screen</button>
     </div>
 </body>
 

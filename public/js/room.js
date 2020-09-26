@@ -10,7 +10,6 @@ const myVideo = document.querySelector('#myVideo video')
 const myName = document.querySelector('#myVideo .name')
 let myUserId
 let myStream
-let myVideoOn = true
 
 const peerVideo = document.querySelector('#peerVideo video')
 const peerName = document.querySelector('#peerVideo .name')
@@ -28,11 +27,22 @@ const peers = {}
 const url_string = window.location.href
 const url = new URL(url_string)
 const myUserName = url.searchParams.get("user")
+let myVideoOn = url.searchParams.get("video") ? true : false
 
 let connection
+let connectedToPeer = false
+
+myPeer.on('open', id => {
+    myUserId = id
+    connectedToPeer = true
+})
+
+myPeer.on('error', err => {
+    console.log('Error', err)
+})
 
 navigator.mediaDevices.getUserMedia({
-    video: true,
+    video: myVideoOn,
     audio: true
 }).then(stream => {
     myStream = stream
@@ -49,30 +59,31 @@ navigator.mediaDevices.getUserMedia({
     myName.innerHTML = myUserName
 
     videoBtn.addEventListener('click', () => {
-        myStream.getVideoTracks().forEach(t => {
-            if (t.enabled) {
-                t.stop()
-                if (connection)
-                    connection.send('noVideo')
-                videoBtn.innerHTML = 'Show Video'
-                myVideoOn = false
-            } else {
-                navigator.mediaDevices.getUserMedia({
-                    video: true,
-                    audio: true
-                }).then(stream => {
-                    myStream = stream
-                    myVideo.srcObject = myStream
-                    myPeer.call(peerUserId, myStream)
+        if (myVideoOn) {
+            myStream.getVideoTracks().forEach(t => {
+                if (t.enabled) {
+                    t.stop()
                     if (connection)
-                        connection.send('video')
-                })
+                        connection.send('noVideo')
+                    videoBtn.innerHTML = 'Show Video'
+                    myVideoOn = false
+                }
+            })
+        } else {
+            navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true
+            }).then(stream => {
+                myStream = stream
+                myVideo.srcObject = myStream
+                myPeer.call(peerUserId, myStream)
+                if (connection)
+                    connection.send('video')
+            })
 
-                videoBtn.innerHTML = 'Hide Video'
-                myVideoOn = true
-            }
-            t.enabled = !t.enabled
-        })
+            videoBtn.innerHTML = 'Hide Video'
+            myVideoOn = true
+        }
     })
 
     audioBtn.addEventListener('click', () => {
@@ -97,15 +108,27 @@ navigator.mediaDevices.getUserMedia({
 
     //when someone calls, we answer them and send our stream
     myPeer.on('call', call => {
-        call.answer(stream)
+        console.log('call aai');
+        console.log(myVideo.videoHeight);
+        call.answer(myStream)
         handleCall(call)
     })
-})
+    if (connectedToPeer) {
+        console.log('emited');
+        socket.emit('join-room', ROOM_ID, myUserId, myUserName)
+    }
 
+    // if (myVideoOn)
+    //     if (connection)
+    //         connection.send('video')
+
+})
+const callList = [];
 
 function handleCall(call) {
     // when caller send its stream add it to receivers ui
     call.on('stream', userVideoStream => {
+        console.log('streaming', userVideoStream);
         peerVideo.srcObject = userVideoStream
         peerName.innerHTML = peerUserName
             // peerNameFallback.innerHTML = ''
@@ -118,10 +141,6 @@ function handleCall(call) {
     })
 
 }
-myPeer.on('open', id => {
-    socket.emit('join-room', ROOM_ID, id, myUserName)
-    myUserId = id
-})
 
 socket.on('user-disconnected', userId => {
     if (peers[userId]) peers[userId].close()
@@ -135,9 +154,12 @@ function connectToNewUser(userId, stream) {
     connection.on('open', async() => {
         await connection.send({ id: myUserId, userName: myUserName })
             //call the new user and send your stream
-        call = myPeer.call(userId, stream)
-
-        handleCall(call)
+        setTimeout(() => {
+            call = myPeer.call(userId, stream)
+            handleCall(call)
+        }, 2500);
+        // call = myPeer.call(userId, stream)
+        // handleCall(call)
     })
 
     connection.on('data', data => {
