@@ -8,18 +8,18 @@ app.set('view engine', 'ejs')
 app.use(express.static('public'))
 
 app.get('/', (req, res) => {
-    // res.render('home', { roomId: `/${uuidV4()}` })
-    res.render('home', { roomId: genRoomId() })
+    res.render('home')
 })
 
-app.get('/:room', (req, res) => {
-    res.render('room', { roomId: req.params.room })
+app.get('/room', (req, res) => {
+    res.render('room')
 })
 
-//when a connnection is made to the server by client
+const roomId = 1
+    //when a connnection is made to the server by client
 io.on('connection', socket => {
     //when "join-room event is emitted"
-    socket.on('join-room', (roomId, userId, userName) => {
+    socket.on('join-room', (userId, userName) => {
 
         //join to that particular room
         socket.join(roomId)
@@ -35,14 +35,3 @@ io.on('connection', socket => {
 
 server.listen(3000)
 console.log("Listening")
-
-//generate random RoomID
-function genRoomId() {
-    let result = '';
-    const characters = 'abcdefghijklmnopqrstuvwxyz';
-    const charactersLength = characters.length;
-    for (let i = 0; i < 5; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-}

@@ -108,8 +108,8 @@ function handleCall(call) {
     call.on('stream', userVideoStream => {
         peerVideo.srcObject = userVideoStream
         peerName.innerHTML = peerUserName
-            // peerNameFallback.innerHTML = ''
-            // peerVideo.style.display = ''
+        peerNameFallback.innerHTML = ''
+        peerVideo.style.display = ''
     })
 
     call.on('close', () => {
@@ -119,12 +119,14 @@ function handleCall(call) {
 
 }
 myPeer.on('open', id => {
-    socket.emit('join-room', ROOM_ID, id, myUserName)
+    socket.emit('join-room', id, myUserName)
     myUserId = id
 })
 
 socket.on('user-disconnected', userId => {
     if (peers[userId]) peers[userId].close()
+    peerVideo.style.display = 'none'
+    peerName.innerHTML = ''
 })
 
 function connectToNewUser(userId, stream) {
@@ -136,7 +138,6 @@ function connectToNewUser(userId, stream) {
         await connection.send({ id: myUserId, userName: myUserName })
             //call the new user and send your stream
         call = myPeer.call(userId, stream)
-
         handleCall(call)
     })
 

@@ -8,17 +8,11 @@
     <title>Home</title>
     <link rel="stylesheet" href="css/home.css">
 </head>
-<script>
-    //this needs to be here because we can access it through ejs here only
-    const ROOM_ID = "<%= roomId %>"
-</script>
 
 <body>
-    <form id='form' method="GET">
+    <form id='form' method="GET" action="room">
         <input id='nameInp' type="text" placeholder="Name" name="user">
         <button disabled id='newMeetingBtn'> New Meeting </button>
-        <input id='roomInp' type="text" placeholder="Room Id" name="room">
-        <button disabled id='joinMeetingBtn'> Join Meeting </button>
     </form>
 
     <script src="js/home.js"></script>
