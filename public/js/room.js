@@ -10,13 +10,14 @@ const myVideo = document.querySelector('#myVideo video')
 const myName = document.querySelector('#myVideo .name')
 let myUserId
 let myStream
-let myVideoOn = true
+let myVideoOn = false
 
 const peerVideo = document.querySelector('#peerVideo video')
 const peerName = document.querySelector('#peerVideo .name')
 const peerNameFallback = document.querySelector('#peerVideo h1')
 let peerUserId
 let peerUserName
+let peerSharingScreen = false
 
 const videoBtn = document.querySelector('#videoBtn')
 const audioBtn = document.querySelector('#audioBtn')
@@ -31,8 +32,18 @@ const myUserName = url.searchParams.get("user")
 
 let connection
 
+
+//receive peerUserName when someone connects to u
+myPeer.on('connection', conn => {
+    connection = conn
+    shareScreenBtn.disabled = false
+    connection.on('data', data => {
+        handleConnectionData(data)
+    })
+})
+
 navigator.mediaDevices.getUserMedia({
-    video: true,
+    video: false,
     audio: true
 }).then(stream => {
     myStream = stream
@@ -48,7 +59,20 @@ navigator.mediaDevices.getUserMedia({
     myVideo.muted = true
     myName.innerHTML = myUserName
 
-    videoBtn.addEventListener('click', () => {
+    videoBtn.addEventListener('click', toggleVideo)
+    audioBtn.addEventListener('click', toggleAudio)
+
+    //when someone calls, we answer them and send our stream
+    myPeer.on('call', call => {
+        call.answer(myStream)
+        handleCall(call)
+        myVideoOn && !peerSharingScreen ? connection.send('video') : connection.send('noVideo')
+    })
+})
+
+function toggleVideo() {
+    if (myStream.getVideoTracks().length > 0) {
+
         myStream.getVideoTracks().forEach(t => {
             if (t.enabled) {
                 t.stop()
@@ -56,60 +80,47 @@ navigator.mediaDevices.getUserMedia({
                     connection.send('noVideo')
                 videoBtn.innerHTML = 'Show Video'
                 myVideoOn = false
-            } else {
-                navigator.mediaDevices.getUserMedia({
-                    video: true,
-                    audio: true
-                }).then(stream => {
-                    myStream = stream
-                    myVideo.srcObject = myStream
-                    myPeer.call(peerUserId, myStream)
-                    if (connection)
-                        connection.send('video')
-                })
+            } else
+                startVideo()
 
-                videoBtn.innerHTML = 'Hide Video'
-                myVideoOn = true
-            }
             t.enabled = !t.enabled
         })
+    } else
+        startVideo()
+
+}
+
+function startVideo() {
+    navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true
+    }).then(stream => {
+        myStream = stream
+        myVideo.srcObject = myStream
+        myPeer.call(peerUserId, myStream)
+        if (connection)
+            connection.send('video')
     })
 
-    audioBtn.addEventListener('click', () => {
-        stream.getAudioTracks().forEach(t => {
-            if (t.enabled) {
-                audioBtn.innerHTML = 'Start Mic'
-            } else {
-                audioBtn.innerHTML = 'Stop Mic'
-            }
-            t.enabled = !t.enabled
-        })
-    })
+    videoBtn.innerHTML = 'Hide Video'
+    myVideoOn = true
+}
 
-    //receive peerUserName when someone connects to u
-    myPeer.on('connection', conn => {
-        connection = conn
-        shareScreenBtn.disabled = false
-        conn.on('data', data => {
-            handleConnectionData(data)
-        })
+function toggleAudio() {
+    myStream.getAudioTracks().forEach(t => {
+        if (t.enabled) {
+            audioBtn.innerHTML = 'Start Mic'
+        } else {
+            audioBtn.innerHTML = 'Stop Mic'
+        }
+        t.enabled = !t.enabled
     })
-
-    //when someone calls, we answer them and send our stream
-    myPeer.on('call', call => {
-        call.answer(stream)
-        handleCall(call)
-    })
-})
-
+}
 
 function handleCall(call) {
     // when caller send its stream add it to receivers ui
     call.on('stream', userVideoStream => {
         peerVideo.srcObject = userVideoStream
-        peerName.innerHTML = peerUserName
-            // peerNameFallback.innerHTML = ''
-            // peerVideo.style.display = ''
     })
 
     call.on('close', () => {
@@ -118,6 +129,7 @@ function handleCall(call) {
     })
 
 }
+
 myPeer.on('open', id => {
     socket.emit('join-room', ROOM_ID, id, myUserName)
     myUserId = id
@@ -125,6 +137,8 @@ myPeer.on('open', id => {
 
 socket.on('user-disconnected', userId => {
     if (peers[userId]) peers[userId].close()
+    peerVideo.style.display = 'none'
+    peerName.innerHTML = ''
 })
 
 function connectToNewUser(userId, stream) {
@@ -136,8 +150,8 @@ function connectToNewUser(userId, stream) {
         await connection.send({ id: myUserId, userName: myUserName })
             //call the new user and send your stream
         call = myPeer.call(userId, stream)
-
         handleCall(call)
+        myVideoOn ? connection.send('video') : connection.send('noVideo')
     })
 
     connection.on('data', data => {
@@ -149,7 +163,6 @@ function connectToNewUser(userId, stream) {
 
 function handleConnectionData(data) {
     if (data == 'noVideo') {
-        peerVideo.src = ''
         peerVideo.style.display = 'none'
         peerNameFallback.innerHTML = peerUserName
         peerNameFallback.parentElement.style.background = 'black'
@@ -158,7 +171,11 @@ function handleConnectionData(data) {
         peerNameFallback.innerHTML = ''
         peerNameFallback.parentElement.style.background = ''
         peerVideo.style.display = ''
+        peerName.innerHTML = peerUserName
     } else if (data == 'sharingScreen') {
+        peerSharingScreen = true
+        videoBtn.disabled = true
+        shareScreenBtn.disabled = true
         peerNameFallback.innerHTML = ''
         peerVideo.style.display = ''
         peerNameFallback.parentElement.style.background = ''
@@ -169,6 +186,9 @@ function handleConnectionData(data) {
             t.stop()
         })
     } else if (data == 'screenShareStopped') {
+        peerSharingScreen = false
+        videoBtn.disabled = false
+        shareScreenBtn.disabled = false
         videoGrid.style.gridTemplateColumns = '1fr 3fr'
             //after the other user has stopped sharing screen, turn on my video if it was on before sharing began
         if (myVideoOn) {
@@ -217,7 +237,6 @@ async function stopScreenShare() {
         })
         myVideo.srcObject = myStream
         myPeer.call(peerUserId, myStream)
-            // connection.send('video')
     } else {
         connection.send('noVideo')
     }
