@@ -32,7 +32,18 @@
     <div class='controls'>
         <button id='videoBtn'>Show Video</button>
         <button id='audioBtn'>Stop Mic</button>
-        <button id='shareScreen'>Share Screen</button>
+        <button id='shareScreenBtn'>Share Screen</button>
+        <button id="shareFileBtn">Share File</button>
+    </div>
+    <div id="selectFileDialog" style="display: none;">
+        <div id="dialog-content">
+            <div class="label">Select a file:</div>
+            <input type="file" id="selectFileInput">
+            <div id="dialog-footer">
+                <button id="shareFileOkBtn" disabled>Ok</button>
+                <button id="shareFileCancelBtn">Cancel</button>
+            </div>
+        </div>
     </div>
 </body>
 

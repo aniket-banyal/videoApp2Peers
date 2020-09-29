@@ -21,8 +21,14 @@ let peerSharingScreen = false
 
 const videoBtn = document.querySelector('#videoBtn')
 const audioBtn = document.querySelector('#audioBtn')
-const shareScreenBtn = document.querySelector('#shareScreen')
+const shareScreenBtn = document.querySelector('#shareScreenBtn')
+const selectFileDialog = document.querySelector('#selectFileDialog')
+const shareFileBtn = document.querySelector('#shareFileBtn')
+const shareFileOkBtn = document.querySelector('#shareFileOkBtn')
+const selectFileInput = document.querySelector('#selectFileInput')
+
 shareScreenBtn.disabled = true
+shareFileBtn.disabled = true
 
 const peers = {}
 
@@ -32,11 +38,13 @@ const myUserName = url.searchParams.get("user")
 
 let connection
 
+let file
 
 //receive peerUserName when someone connects to u
 myPeer.on('connection', conn => {
     connection = conn
     shareScreenBtn.disabled = false
+    shareFileBtn.disabled = false
     connection.on('data', data => {
         handleConnectionData(data)
     })
@@ -53,6 +61,7 @@ navigator.mediaDevices.getUserMedia({
         peerUserName = userName
         connectToNewUser(userId, myStream)
         shareScreenBtn.disabled = false
+        shareFileBtn.disabled = false
     })
 
     myVideo.srcObject = myStream
@@ -62,6 +71,22 @@ navigator.mediaDevices.getUserMedia({
     videoBtn.addEventListener('click', toggleVideo)
     audioBtn.addEventListener('click', toggleAudio)
 
+    shareFileBtn.addEventListener('click', () => {
+        selectFileDialog.style.display = 'block';
+    });
+
+    document.getElementById('shareFileCancelBtn').addEventListener('click', () => {
+        selectFileInput.value = '';
+        selectFileDialog.style.display = 'none';
+    });
+
+    selectFileInput.addEventListener('change', (e) => {
+        file = e.target.files[0];
+        shareFileOkBtn.disabled = !file;
+    });
+
+    shareFileOkBtn.addEventListener('click', shareFile)
+
     //when someone calls, we answer them and send our stream
     myPeer.on('call', call => {
         call.answer(myStream)
@@ -69,6 +94,13 @@ navigator.mediaDevices.getUserMedia({
         myVideoOn && !peerSharingScreen ? connection.send('video') : connection.send('noVideo')
     })
 })
+
+function shareFile(e) {
+    if (file) {
+        connection.send({ name: file.name, file: file })
+        selectFileDialog.style.display = 'none';
+    }
+}
 
 function toggleVideo() {
     if (myStream.getVideoTracks().length > 0) {
@@ -205,11 +237,25 @@ function handleConnectionData(data) {
         //this should come after the above if, otherwise if peer's video was originally off and he turns off
         //screen share and then turns on his video then u'll see the last frame of screen share
         myVideo.parentElement.style.display = ''
-    } else {
+    } else if (data.hasOwnProperty('id') && data.hasOwnProperty('userName')) {
         peerUserName = data['userName']
         peerUserId = data['id']
+    } else {
+        const blob = new Blob([data['file']]);
+        downloadFile(blob, data['name'])
+
     }
 }
+
+const downloadFile = (blob, fileName) => {
+    const a = document.createElement('a');
+    const url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove()
+};
 
 let captureStream
 let sharingScreen = false

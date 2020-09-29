@@ -53,3 +53,52 @@ video {
     height: 40px;
     width: 90px;
 }
+
+#selectFileDialog {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+#dialog-content {
+    position: absolute;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 300px;
+    height: 100px;
+    margin: auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 3px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#dialog-content .label {
+    margin-bottom: 5px;
+}
+
+#dialog-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.4);
+    padding: 10px;
+}
+
+#shareFileOkBtn {
+    margin-left: 10px;
+    float: right;
+}
+
+#shareFileCancelBtn {
+    float: right;
+}
