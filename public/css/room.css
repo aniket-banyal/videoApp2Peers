@@ -50,11 +50,13 @@ video {
 }
 
 .controls button {
-    height: 40px;
-    width: 90px;
+    height: 35px;
+    width: 80px;
 }
 
-#selectFileDialog {
+#selectFileDialog,
+#fileRequestDialog,
+#fileShareStatusDialog {
     position: absolute;
     height: 100%;
     width: 100%;
@@ -64,15 +66,14 @@ video {
     z-index: 10;
 }
 
-#dialog-content {
-    position: absolute;
+.dialog-content {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     width: 300px;
-    height: 100px;
+    height: 130px;
     margin: auto;
     background-color: white;
     padding: 20px;
@@ -81,11 +82,16 @@ video {
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-#dialog-content .label {
+.dialog-content .label {
     margin-bottom: 5px;
 }
 
-#dialog-footer {
+#fileShareStatus {
+    margin-top: 10px;
+    font-size: large;
+}
+
+.dialog-footer {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -94,11 +100,13 @@ video {
     padding: 10px;
 }
 
-#shareFileOkBtn {
+#shareFileOkBtn,
+#fileRequestAcceptBtn {
     margin-left: 10px;
     float: right;
 }
 
-#shareFileCancelBtn {
+#shareFileCancelBtn,
+#fileRequestDenyBtn {
     float: right;
 }

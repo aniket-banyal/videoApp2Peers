@@ -4,6 +4,8 @@ const myPeer = new Peer(undefined, {
     port: '3001'
 })
 
+const ONE_MB = 1000000
+
 const videoGrid = document.querySelector('#video-grid')
 
 const myVideo = document.querySelector('#myVideo video')
@@ -26,6 +28,14 @@ const selectFileDialog = document.querySelector('#selectFileDialog')
 const shareFileBtn = document.querySelector('#shareFileBtn')
 const shareFileOkBtn = document.querySelector('#shareFileOkBtn')
 const selectFileInput = document.querySelector('#selectFileInput')
+
+const fileShareStatusDialog = document.querySelector('#fileShareStatusDialog')
+const fileShareStatus = document.querySelector('#fileShareStatus')
+
+
+const fileRequestDialog = document.querySelector('#fileRequestDialog')
+const fileRequestMsg = document.querySelector('#fileRequestMsg')
+const fileRequestAcceptBtn = document.querySelector('#fileRequestAcceptBtn')
 
 shareScreenBtn.disabled = true
 shareFileBtn.disabled = true
@@ -73,6 +83,7 @@ navigator.mediaDevices.getUserMedia({
 
     shareFileBtn.addEventListener('click', () => {
         selectFileDialog.style.display = 'block';
+        fileShareStatus.innerHTML = ''
     });
 
     document.getElementById('shareFileCancelBtn').addEventListener('click', () => {
@@ -95,10 +106,14 @@ navigator.mediaDevices.getUserMedia({
     })
 })
 
-function shareFile(e) {
+function shareFile() {
     if (file) {
-        connection.send({ name: file.name, file: file })
-        selectFileDialog.style.display = 'none';
+        connection.send({ name: file.name, size: file.size })
+        fileShareStatus.innerHTML = 'Sending....'
+        fileShareStatusDialog.style.display = ''
+        selectFileDialog.style.display = 'none'
+
+
     }
 }
 
@@ -195,16 +210,21 @@ function connectToNewUser(userId, stream) {
 
 function handleConnectionData(data) {
     if (data == 'noVideo') {
+
         peerVideo.style.display = 'none'
         peerNameFallback.innerHTML = peerUserName
         peerNameFallback.parentElement.style.background = 'black'
         peerName.innerHTML = ''
+
     } else if (data == 'video') {
+
         peerNameFallback.innerHTML = ''
         peerNameFallback.parentElement.style.background = ''
         peerVideo.style.display = ''
         peerName.innerHTML = peerUserName
+
     } else if (data == 'sharingScreen') {
+
         peerSharingScreen = true
         videoBtn.disabled = true
         shareScreenBtn.disabled = true
@@ -217,7 +237,9 @@ function handleConnectionData(data) {
         myStream.getVideoTracks().forEach(t => {
             t.stop()
         })
+
     } else if (data == 'screenShareStopped') {
+
         peerSharingScreen = false
         videoBtn.disabled = false
         shareScreenBtn.disabled = false
@@ -237,17 +259,54 @@ function handleConnectionData(data) {
         //this should come after the above if, otherwise if peer's video was originally off and he turns off
         //screen share and then turns on his video then u'll see the last frame of screen share
         myVideo.parentElement.style.display = ''
+
     } else if (data.hasOwnProperty('id') && data.hasOwnProperty('userName')) {
+
         peerUserName = data['userName']
         peerUserId = data['id']
-    } else {
+
+    } else if (data.hasOwnProperty('name') && data.hasOwnProperty('size')) {
+
+        let size
+
+        if (data.size < ONE_MB / 10)
+            size = data.size + ' KB'
+        else
+            size = (data.size / ONE_MB).toFixed(2) + ' MB'
+
+        fileRequestAcceptBtn.addEventListener('click', () => {
+            connection.send('fileRequestAccepted')
+            fileRequestDialog.style.display = 'none'
+        })
+
+        fileRequestDenyBtn.addEventListener('click', () => {
+            connection.send('fileRequestDenied')
+            fileRequestDialog.style.display = 'none'
+        })
+
+        fileRequestMsg.innerHTML = `${peerUserName} wants to send a file ${data.name} (${size}). Accept ?`
+        fileRequestDialog.style.display = ''
+
+    } else if (data == 'fileRequestAccepted') {
+
+        connection.send({ name: file.name, file: file })
+        fileShareStatus.innerHTML = 'Sent!'
+        setTimeout(() => fileShareStatusDialog.style.display = 'none', 2000)
+
+    } else if (data == 'fileRequestDenied') {
+
+        fileShareStatus.innerHTML = `${peerUserName} didn't accept your request to share file`
+        setTimeout(() => fileShareStatusDialog.style.display = 'none', 2000)
+
+    } else if (data.hasOwnProperty('name') && data.hasOwnProperty('file')) {
+
         const blob = new Blob([data['file']]);
         downloadFile(blob, data['name'])
 
     }
 }
 
-const downloadFile = (blob, fileName) => {
+function downloadFile(blob, fileName) {
     const a = document.createElement('a');
     const url = window.URL.createObjectURL(blob);
     a.href = url;

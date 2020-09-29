@@ -36,12 +36,29 @@
         <button id="shareFileBtn">Share File</button>
     </div>
     <div id="selectFileDialog" style="display: none;">
-        <div id="dialog-content">
+        <div class="dialog-content">
             <div class="label">Select a file:</div>
             <input type="file" id="selectFileInput">
-            <div id="dialog-footer">
+            <div class="dialog-footer">
                 <button id="shareFileOkBtn" disabled>Ok</button>
                 <button id="shareFileCancelBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fileShareStatusDialog" style="display: none;">
+        <div class="dialog-content">
+            <p id='fileShareStatus'></p>
+        </div>
+    </div>
+
+
+    <div id="fileRequestDialog" style="display: none;">
+        <div class="dialog-content">
+            <p id='fileRequestMsg'></p>
+            <div class="dialog-footer">
+                <button id="fileRequestAcceptBtn">Ok</button>
+                <button id="fileRequestDenyBtn">Cancel</button>
             </div>
         </div>
     </div>
