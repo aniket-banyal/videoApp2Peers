@@ -1,3 +1,7 @@
+:root {
+    --chatPadding: 12px;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -8,18 +12,83 @@
     height: 90vh;
     padding: 10px;
     grid-template-columns: 1fr 3fr;
-    gap: 10px;
+    grid-template-rows: 1fr 2fr;
+    grid-template-areas: 'myVideo peerVideo' 'chatWindow peerVideo';
+    row-gap: 10px;
+    column-gap: 20px;
 }
 
 .videoHolder {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
+}
+
+#myVideo {
+    grid-area: myVideo;
+}
+
+#peerVideo {
+    grid-area: peerVideo;
+}
+
+#chatWindow {
+    position: relative;
+    grid-area: chatWindow;
+    background-color: rgba(0, 0, 255, 0.08);
+    padding: var(--chatPadding);
+}
+
+#chats {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    max-height: 280px;
+}
+
+.myMsg {
+    text-align: right;
+    background-color: rgba(111, 217, 252, 0.9);
+    align-self: flex-end;
+}
+
+.peerMsg {
+    text-align: left;
+    background-color: rgba(148, 247, 222, 0.9);
+    align-self: flex-start;
+}
+
+.myMsg,
+.peerMsg {
+    width: fit-content;
+    max-width: 80%;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.time {
+    margin-top: 5px;
+    font-size: smaller;
+    color: gray;
+}
+
+.chatFooter {
+    position: absolute;
+    bottom: 0;
+    width: calc(100% - 2 * var(--chatPadding));
+    display: flex;
+}
+
+.chatFooter input {
+    width: 90%;
 }
 
 video {
     width: 100%;
-    max-height: 90vh;
+    max-height: 85vh;
     /* object-fit: cover; */
 }
 
