@@ -6,11 +6,14 @@ const myPeer = new Peer(undefined, {
 
 const ONE_MB = 1000000
 
-const videoGrid = document.querySelector('#video-grid')
+const videoGrid = document.querySelector('#videoGrid')
+
+const openChatBtn = document.querySelector('#chatBtnDiv button')
+const closeChatBtn = document.querySelector('#chatWindow a')
 const chatWindow = document.querySelector('#chatWindow')
+const chats = document.querySelector('#chats')
 const chatInput = document.querySelector('#chatInput')
 const sendMsgBtn = document.querySelector('#sendMsgBtn')
-const chats = document.querySelector('#chats')
 
 const myVideo = document.querySelector('#myVideo video')
 const myName = document.querySelector('#myVideo .name')
@@ -146,6 +149,28 @@ function setEventListeners() {
         chatInput.focus()
         sendMsgBtn.disabled = true
     })
+
+    openChatBtn.addEventListener('click', () => {
+        let w = getComputedStyle(chatWindow).getPropertyValue('--chatWindowWidth')
+        chatWindow.style.left = `calc(100vw - ${w})`
+        videoGrid.style.marginRight = w
+        openChatBtn.style.display = 'none'
+        chatInput.focus()
+        chatWindow.style.boxShadow = '0 0 10px 2px #C0C0C0'
+
+        if (peerSharingScreen)
+            videoGrid.style.gridTemplateColumns = '1fr'
+    })
+
+    closeChatBtn.addEventListener('click', () => {
+        chatWindow.style.left = '100vw'
+        videoGrid.style.marginRight = 0
+        openChatBtn.style.display = ''
+        chatWindow.style.boxShadow = ''
+
+        if (peerSharingScreen)
+            videoGrid.style.gridTemplateColumns = '10fr 1fr'
+    })
 }
 
 function createMsg(type, text) {
@@ -215,11 +240,12 @@ function handleConnectionData(data) {
         videoBtn.disabled = true
         shareScreenBtn.disabled = true
         peerNameFallback.innerHTML = ''
+        peerName.innerHTML = ''
         peerVideo.style.display = ''
         peerNameFallback.parentElement.style.background = ''
         myVideo.parentElement.style.display = 'none'
-        chatWindow.style.display = 'none'
-        videoGrid.style.gridTemplateColumns = '1fr'
+        videoGrid.style.gridTemplateColumns = '10fr 1fr'
+        peerVideo.style.maxHeight = '100%'
             //stop my video if other user is sharing screen
         myStream.getVideoTracks().forEach(t => {
             t.stop()
@@ -230,8 +256,9 @@ function handleConnectionData(data) {
         peerSharingScreen = false
         videoBtn.disabled = false
         shareScreenBtn.disabled = false
-        videoGrid.style.gridTemplateColumns = '1fr 3fr'
-        chatWindow.style.display = ''
+        videoGrid.style.gridTemplateColumns = '3fr 1fr'
+        peerVideo.style.maxHeight = '85vh'
+
 
         //after the other user has stopped sharing screen, turn on my video if it was on before sharing began
         if (myVideoOn) {

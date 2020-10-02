@@ -16,11 +16,7 @@
 </head>
 
 <body>
-    <div id="video-grid">
-        <div class='videoHolder' id="myVideo">
-            <video autoplay></video>
-            <h3 class='name'></h3>
-        </div>
+    <div id="videoGrid">
 
         <div class='videoHolder' id="peerVideo">
             <video autoplay></video>
@@ -28,14 +24,15 @@
             <h3 class='name'></h3>
         </div>
 
-        <div id='chatWindow'>
-            <h1>Chat</h1>
-            <div id="chats"></div>
-            <div class="chatFooter">
-                <input type="text" id="chatInput">
-                <button id='sendMsgBtn' disabled>Send</button>
-            </div>
+        <div class='videoHolder' id="myVideo">
+            <video autoplay></video>
+            <h3 class='name'></h3>
         </div>
+
+        <div id="chatBtnDiv">
+            <button>Chat</button>
+        </div>
+
     </div>
 
     <div class='controls'>
@@ -43,6 +40,16 @@
         <button id='audioBtn'>Stop Mic</button>
         <button id='shareScreenBtn' disabled>Share Screen</button>
         <button id="shareFileBtn" disabled>Share File</button>
+    </div>
+
+    <div id='chatWindow'>
+        <a href="javascript:void(0)" class="closebtn">×</a>
+        <!-- <h1>Chat</h1> -->
+        <div id="chats"></div>
+        <div class="chatFooter">
+            <input type="text" id="chatInput">
+            <button id='sendMsgBtn' disabled>Send</button>
+        </div>
     </div>
 
     <div id="selectFileDialog" style="display: none;">
