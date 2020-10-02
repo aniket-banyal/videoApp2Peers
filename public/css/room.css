@@ -1,5 +1,6 @@
 :root {
     --chatPadding: 12px;
+    --chatWindowWidth: 300px;
 }
 
 * {
@@ -7,15 +8,16 @@
     padding: 0;
 }
 
-#video-grid {
+#videoGrid {
     display: grid;
     height: 90vh;
-    padding: 10px;
-    grid-template-columns: 1fr 3fr;
-    grid-template-rows: 1fr 2fr;
-    grid-template-areas: 'myVideo peerVideo' 'chatWindow peerVideo';
+    padding: 10px 20px;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: 'peerVideo myVideo' 'peerVideo chatBtnDiv';
     row-gap: 10px;
     column-gap: 20px;
+    transition: margin 0.4s ease;
 }
 
 .videoHolder {
@@ -33,18 +35,57 @@
     grid-area: peerVideo;
 }
 
-#chatWindow {
+#chatBtnDiv {
+    grid-area: chatBtnDiv;
     position: relative;
+}
+
+#chatBtnDiv button {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 50px;
+}
+
+#chatWindow {
     grid-area: chatWindow;
-    background-color: rgba(0, 0, 255, 0.08);
-    padding: var(--chatPadding);
+    padding: var(--chatPadding) 0;
+    height: 100vh;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 100vw;
+    width: var(--chatWindowWidth);
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatFooter {
+    margin: 10px auto;
+    width: calc(100% - 2 * var(--chatPadding));
+    display: flex;
+}
+
+#chatWindow .closebtn {
+    text-decoration: none;
+    color: black;
+    position: absolute;
+    top: 0;
+    font-size: 36px;
+    left: 10px;
 }
 
 #chats {
+    padding: 0 10px;
+    margin-top: 25px;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
-    max-height: 280px;
+    max-height: 88vh;
 }
 
 .myMsg {
@@ -73,13 +114,6 @@
     margin-top: 5px;
     font-size: smaller;
     color: gray;
-}
-
-.chatFooter {
-    position: absolute;
-    bottom: 0;
-    width: calc(100% - 2 * var(--chatPadding));
-    display: flex;
 }
 
 .chatFooter input {
