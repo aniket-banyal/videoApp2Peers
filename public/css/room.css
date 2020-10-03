@@ -54,13 +54,14 @@
     padding: var(--chatPadding) 0;
     height: 100vh;
     position: fixed;
-    z-index: 1;
+    z-index: 2;
     top: 0;
     left: 100vw;
     width: var(--chatWindowWidth);
-    transition: all 0.4s ease;
+    transition: left 0.4s ease, opacity 0.4s ease;
     display: flex;
     flex-direction: column;
+    background-color: white;
 }
 
 .chatFooter {
@@ -150,6 +151,7 @@ video {
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1;
 }
 
 .controls button {
@@ -212,4 +214,14 @@ video {
 #shareFileCancelBtn,
 #fileRequestDenyBtn {
     float: right;
+}
+
+.whiteboard {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
 }

@@ -40,9 +40,10 @@
         <button id='audioBtn'>Stop Mic</button>
         <button id='shareScreenBtn' disabled>Share Screen</button>
         <button id="shareFileBtn" disabled>Share File</button>
+        <button id="whiteboardBtn" disabled>Whiteboard</button>
     </div>
 
-    <div id='chatWindow'>
+    <div id='chatWindow' style='opacity: 0;'>
         <a href="javascript:void(0)" class="closebtn">×</a>
         <!-- <h1>Chat</h1> -->
         <div id="chats"></div>
@@ -79,6 +80,8 @@
             </div>
         </div>
     </div>
+
+    <canvas class="whiteboard" style='display: none;'></canvas>
 </body>
 
 </html>
