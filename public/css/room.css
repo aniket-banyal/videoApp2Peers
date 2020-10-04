@@ -90,7 +90,6 @@
 }
 
 .myMsg {
-    text-align: right;
     background-color: rgba(111, 217, 252, 0.9);
     align-self: flex-end;
 }
