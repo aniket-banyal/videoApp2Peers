@@ -16,17 +16,21 @@ function toggleVideo() {
 
 function startVideo() {
     navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true
-    }).then(stream => {
-        myStream = stream
-        myVideo.srcObject = myStream
-        myPeer.call(peerUserId, myStream)
-        if (connection) connection.send('video')
-    })
+            video: true,
+            audio: true
+        }).then(stream => {
+            myStream = stream
+            myVideo.srcObject = myStream
+            myPeer.call(peerUserId, myStream)
 
-    videoBtn.innerHTML = 'Hide Video'
-    myVideoOn = true
+            if (connection) connection.send('video')
+
+            videoBtn.innerHTML = 'Hide Video'
+            myVideoOn = true
+        })
+        .catch(e => {
+            console.log(e, 'Please allow video')
+        })
 }
 
 function stopMyVideo() {
