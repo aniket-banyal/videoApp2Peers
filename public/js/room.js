@@ -9,6 +9,9 @@ myPeer.on('connection', conn => {
     shareScreenBtn.disabled = false
     shareFileBtn.disabled = false
     whiteboardBtn.disabled = false
+
+    if (chatInput.value !== '') sendMsgBtn.disabled = false
+
     connection.on('data', data => {
         handleConnectionData(data)
     })
@@ -16,34 +19,39 @@ myPeer.on('connection', conn => {
 
 
 navigator.mediaDevices.getUserMedia({
-    video: false,
-    audio: true
-}).then(stream => {
-    myStream = stream
-        //connect to new user whose id is userId and send ur stream
-    socket.on('user-connected', (userId, userName) => {
-        peerUserId = userId
-        peerUserName = userName
-        connectToNewUser(userId, myStream)
-        peerVideo.parentElement.style.display = ''
-        shareScreenBtn.disabled = false
-        shareFileBtn.disabled = false
-        whiteboardBtn.disabled = false
+        video: false,
+        audio: true
+    }).then(stream => {
+        myStream = stream
+            //connect to new user whose id is userId and send ur stream
+        socket.on('user-connected', (userId, userName) => {
+            peerUserId = userId
+            peerUserName = userName
+            connectToNewUser(userId, myStream)
+            peerVideo.parentElement.style.display = ''
+            shareScreenBtn.disabled = false
+            shareFileBtn.disabled = false
+            whiteboardBtn.disabled = false
+
+            if (chatInput.value !== '') sendMsgBtn.disabled = false
+        })
+
+        myVideo.srcObject = myStream
+        myVideo.muted = true
+        myName.innerHTML = myUserName
+
+        setEventListeners()
+
+        //when someone calls, we answer them and send our stream
+        myPeer.on('call', call => {
+            call.answer(myStream)
+            handleCall(call)
+            myVideoOn && !peerSharingScreen ? connection.send('video') : connection.send('noVideo')
+        })
     })
-
-    myVideo.srcObject = myStream
-    myVideo.muted = true
-    myName.innerHTML = myUserName
-
-    setEventListeners()
-
-    //when someone calls, we answer them and send our stream
-    myPeer.on('call', call => {
-        call.answer(myStream)
-        handleCall(call)
-        myVideoOn && !peerSharingScreen ? connection.send('video') : connection.send('noVideo')
+    .catch(e => {
+        console.log(e, 'Please allow microphone')
     })
-})
 
 
 socket.on('user-disconnected', userId => {
@@ -63,7 +71,6 @@ function setEventListeners() {
             stopScreenShare()
         else
             shareScreen()
-        sharingScreen = !sharingScreen
     })
 
     shareFileBtn.addEventListener('click', () => {
