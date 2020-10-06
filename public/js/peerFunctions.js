@@ -43,7 +43,7 @@ function handleConnectionData(data) {
         peerVideo.style.display = ''
         peerNameFallback.parentElement.style.background = ''
         myVideo.parentElement.style.display = 'none'
-        videoGrid.style.gridTemplateColumns = '10fr 1fr'
+        videoGrid.style.gridTemplateColumns = '1fr'
         peerVideo.style.maxHeight = '100%'
             //stop my video if other user is sharing screen
         stopMyVideo()
@@ -61,7 +61,7 @@ function handleConnectionData(data) {
         if (myVideoOn) {
             navigator.mediaDevices.getUserMedia({
                 video: true,
-                audio: true
+                audio: audioOn
             }).then(stream => {
                 myStream = stream
                 myVideo.srcObject = myStream
@@ -105,7 +105,13 @@ function handleConnectionData(data) {
         downloadFile(blob, data['name'])
 
     } else if (data.hasOwnProperty('msg')) {
+
         createMsg('peerMsg', data['msg'])
+        if (!chatOpen) {
+            notificationCount++
+            notificationBubble.innerHTML = notificationCount
+        }
+
     } else if (data == 'whiteboardOn') {
 
         window.addEventListener('resize', onResize, false)
@@ -129,7 +135,7 @@ function handleConnectionData(data) {
         if (myVideoOn) {
             navigator.mediaDevices.getUserMedia({
                 video: true,
-                audio: true
+                audio: audioOn
             }).then(stream => {
                 myStream = stream
                 myVideo.srcObject = myStream

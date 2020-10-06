@@ -12,12 +12,16 @@ let connection
 
 const videoGrid = document.querySelector('#videoGrid')
 
-const openChatBtn = document.querySelector('#chatBtnDiv button')
+const openChatBtn = document.querySelector('#openChatBtn')
 const closeChatBtn = document.querySelector('#chatWindow a')
 const chatWindow = document.querySelector('#chatWindow')
 const chats = document.querySelector('#chats')
 const chatInput = document.querySelector('#chatInput')
 const sendMsgBtn = document.querySelector('#sendMsgBtn')
+const notificationBubble = document.querySelector('.notificationBubble')
+let chatOpen = false
+
+let notificationCount = 0
 
 const myVideo = document.querySelector('#myVideo video')
 const myName = document.querySelector('#myVideo .name')
@@ -35,6 +39,7 @@ let peerSharingScreen = false
 
 const videoBtn = document.querySelector('#videoBtn')
 const audioBtn = document.querySelector('#audioBtn')
+let audioOn = true
 
 const shareScreenBtn = document.querySelector('#shareScreenBtn')
 let captureStream

@@ -17,7 +17,7 @@ function toggleVideo() {
 function startVideo() {
     navigator.mediaDevices.getUserMedia({
             video: true,
-            audio: true
+            audio: audioOn
         }).then(stream => {
             myStream = stream
             myVideo.srcObject = myStream
@@ -40,17 +40,38 @@ function stopMyVideo() {
 }
 
 function toggleAudio() {
-    myStream.getAudioTracks().forEach(t => {
-        t.enabled ? audioBtn.innerHTML = 'Start Mic' : audioBtn.innerHTML = 'Stop Mic'
-        t.enabled = !t.enabled
-    })
+    if (myStream.getAudioTracks().length > 0) {
+
+        myStream.getAudioTracks().forEach(t => {
+            t.enabled ? audioBtn.innerHTML = 'Unmute' : audioBtn.innerHTML = 'Mute'
+            t.enabled = !t.enabled
+            audioOn = !audioOn
+        })
+    } else startAudio()
+}
+
+function startAudio() {
+    navigator.mediaDevices.getUserMedia({
+            video: myVideoOn,
+            audio: true
+        }).then(stream => {
+            myStream = stream
+            myVideo.srcObject = myStream
+            myPeer.call(peerUserId, myStream)
+
+            audioBtn.innerHTML = 'Mute'
+            audioOn = true
+        })
+        .catch(e => {
+            console.log(e, 'Please allow microphone')
+        })
 }
 
 async function showVideoIfOn() {
     if (myVideoOn) {
         myStream = await navigator.mediaDevices.getUserMedia({
             video: true,
-            audio: true
+            audio: audioOn
         })
         myVideo.srcObject = myStream
         myPeer.call(peerUserId, myStream)
