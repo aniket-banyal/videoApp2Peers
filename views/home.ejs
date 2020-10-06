@@ -16,9 +16,13 @@
 <body>
     <form id='form' method="GET">
         <input id='nameInp' type="text" placeholder="Name" name="user">
-        <button disabled id='newMeetingBtn'> New Meeting </button>
-        <input id='roomInp' type="text" placeholder="Room Id" name="room">
-        <button disabled id='joinMeetingBtn'> Join Meeting </button>
+        <div class="btnsDiv">
+            <button disabled id='newMeetingBtn'> New Meeting </button>
+            <div class="joinDiv">
+                <input id='roomInp' type="text" placeholder="Room Id" name="room">
+                <button disabled id='joinMeetingBtn'> Join Meeting </button>
+            </div>
+        </div>
     </form>
 
     <script src="js/home.js"></script>
