@@ -14,7 +14,7 @@
     padding: 10px 20px;
     grid-template-columns: 3fr 1fr;
     grid-template-rows: 1fr 1fr;
-    grid-template-areas: 'peerVideo myVideo' 'peerVideo .';
+    grid-template-areas: 'peerVideo myVideo' 'peerVideo videoAudioControls';
     row-gap: 10px;
     column-gap: 20px;
     transition: margin 0.4s ease;
@@ -33,6 +33,13 @@
 
 #peerVideo {
     grid-area: peerVideo;
+}
+
+#videoAudioControls {
+    margin-top: 30px;
+    grid-area: videoAudioControls;
+    display: flex;
+    justify-content: space-evenly;
 }
 
 #openChatBtn {
@@ -145,7 +152,9 @@ video {
 
 .controls {
     width: 100vw;
-    margin: 10px auto;
+    margin: auto;
+    margin-top: 20px;
+    padding: 10px;
     position: fixed;
     bottom: 0;
     display: flex;
@@ -154,9 +163,24 @@ video {
     z-index: 1;
 }
 
+.controls button,
+#videoAudioControls button {
+    height: 40px;
+    width: 90px;
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
 .controls button {
-    height: 35px;
-    width: 80px;
+    margin-right: 20px;
 }
 
 #selectFileDialog,
