@@ -8,6 +8,10 @@
     padding: 0;
 }
 
+body {
+    background-color: #121212;
+}
+
 #videoGrid {
     display: grid;
     height: 90vh;
@@ -25,6 +29,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+    max-height: 88vh;
 }
 
 #myVideo {
@@ -46,7 +51,7 @@
     line-height: 25px;
     width: 25px;
     border-radius: 50%;
-    background: magenta;
+    background: #e94560;
     color: white;
 }
 
@@ -62,7 +67,7 @@
     transition: left 0.4s ease, opacity 0.4s ease;
     display: flex;
     flex-direction: column;
-    background-color: white;
+    background-color: rgb(248, 248, 248);
 }
 
 .chatFooter {
@@ -91,13 +96,13 @@
 }
 
 .myMsg {
-    background-color: rgba(111, 217, 252, 0.9);
+    background-color: #bbe1fa;
     align-self: flex-end;
 }
 
 .peerMsg {
     text-align: left;
-    background-color: rgba(148, 247, 222, 0.9);
+    background-color: #c5c7f0;
     align-self: flex-start;
 }
 
@@ -105,10 +110,11 @@
 .peerMsg {
     width: fit-content;
     max-width: 80%;
-    padding: 5px;
+    padding: 8px 10px;
     margin-top: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
+    font-size: large;
 }
 
 .time {
@@ -117,13 +123,17 @@
     color: gray;
 }
 
+.myMsg .time {
+    text-align: right;
+}
+
 .chatFooter input {
     width: 90%;
 }
 
 video {
     width: 100%;
-    max-height: 85vh;
+    max-height: 88vh;
     /* object-fit: cover; */
 }
 
@@ -141,6 +151,7 @@ video {
 
 .name {
     font-weight: 100;
+    color: white;
 }
 
 .controls {
@@ -155,8 +166,22 @@ video {
 }
 
 .controls button {
-    height: 35px;
+    height: 40px;
     width: 80px;
+    margin-right: 8px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+}
+
+.controls button:hover:enabled {
+    transition: box-shadow 0.3s ease;
+    box-shadow: 0 0 5px 2px #C0C0C0;
+    cursor: pointer;
+}
+
+button:disabled {
+    color: rgb(210, 210, 210);
 }
 
 #selectFileDialog,

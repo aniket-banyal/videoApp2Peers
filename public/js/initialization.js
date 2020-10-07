@@ -63,7 +63,7 @@ const whiteboardBtn = document.querySelector('#whiteboardBtn')
 const canvas = document.querySelector('.whiteboard')
 const context = canvas.getContext('2d')
 let drawing = false
-let current = { color: 'black' }
+let current = { color: 'white' }
 
 const url_string = window.location.href
 const url = new URL(url_string)

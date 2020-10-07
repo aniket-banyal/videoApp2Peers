@@ -108,7 +108,6 @@ function setEventListeners() {
             chatWindow.style.left = `calc(100vw - ${w})`
             videoGrid.style.marginRight = w
             chatInput.focus()
-            chatWindow.style.boxShadow = '0 0 10px 2px #C0C0C0'
             notificationCount = 0
             notificationBubble.innerHTML = ''
 
@@ -123,7 +122,6 @@ function setEventListeners() {
         chatWindow.style.opacity = 0
         chatWindow.style.left = '100vw'
         videoGrid.style.marginRight = 0
-        chatWindow.style.boxShadow = ''
         notificationCount = 0
         notificationBubble.innerHTML = ''
 

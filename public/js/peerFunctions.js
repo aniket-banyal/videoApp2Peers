@@ -22,7 +22,7 @@ function handleConnectionData(data) {
 
         peerVideo.style.display = 'none'
         peerNameFallback.innerHTML = peerUserName
-        peerNameFallback.parentElement.style.background = 'black'
+        peerNameFallback.parentElement.style.background = '#5a5a5a'
         peerName.innerHTML = ''
 
     } else if (data == 'video') {
