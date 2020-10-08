@@ -8,16 +8,20 @@
     padding: 0;
 }
 
+body {
+    background-color: #121212;
+}
+
 #videoGrid {
     display: grid;
     height: 90vh;
     padding: 10px 20px;
     grid-template-columns: 3fr 1fr;
     grid-template-rows: 1fr 1fr;
-    grid-template-areas: 'peerVideo myVideo' 'peerVideo chatBtnDiv';
+    grid-template-areas: 'peerDiv myDiv' 'peerDiv .';
     row-gap: 10px;
     column-gap: 20px;
-    transition: margin 0.4s ease;
+    transition: margin 0.4s ease, opacity 0.5s ease;
 }
 
 .videoHolder {
@@ -25,28 +29,46 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+    max-height: 88vh;
 }
 
-#myVideo {
-    grid-area: myVideo;
+#myDiv {
+    grid-area: myDiv;
+    background: #5a5a5a;
 }
 
-#peerVideo {
-    grid-area: peerVideo;
+#peerDiv {
+    grid-area: peerDiv;
 }
 
-#chatBtnDiv {
-    grid-area: chatBtnDiv;
+#myDiv,
+#peerDiv {
+    position: relative;
+    transition: background 0.5s ease, opacity 0.5s ease;
+}
+
+.nameFallback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    transform: opacity 0.5s ease;
+}
+
+#openChatBtn {
     position: relative;
 }
 
-#chatBtnDiv button {
+.notificationBubble {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 100px;
-    height: 50px;
+    top: -10px;
+    right: -10px;
+    line-height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    background: #e94560;
+    color: white;
 }
 
 #chatWindow {
@@ -61,7 +83,7 @@
     transition: left 0.4s ease, opacity 0.4s ease;
     display: flex;
     flex-direction: column;
-    background-color: white;
+    background-color: rgb(248, 248, 248);
 }
 
 .chatFooter {
@@ -90,13 +112,13 @@
 }
 
 .myMsg {
-    background-color: rgba(111, 217, 252, 0.9);
+    background-color: #bbe1fa;
     align-self: flex-end;
 }
 
 .peerMsg {
     text-align: left;
-    background-color: rgba(148, 247, 222, 0.9);
+    background-color: #c5c7f0;
     align-self: flex-start;
 }
 
@@ -104,10 +126,11 @@
 .peerMsg {
     width: fit-content;
     max-width: 80%;
-    padding: 5px;
+    padding: 8px 10px;
     margin-top: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
+    font-size: large;
 }
 
 .time {
@@ -116,30 +139,25 @@
     color: gray;
 }
 
+.myMsg .time {
+    text-align: right;
+}
+
 .chatFooter input {
     width: 90%;
 }
 
 video {
     width: 100%;
-    max-height: 85vh;
+    max-height: 88vh;
+    transition: opacity 0.5s ease
     /* object-fit: cover; */
-}
-
-#peerVideo {
-    position: relative;
-}
-
-#peerVideo h1 {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
 }
 
 .name {
     font-weight: 100;
+    color: white;
+    transition: opacity 0.3s ease;
 }
 
 .controls {
@@ -154,8 +172,22 @@ video {
 }
 
 .controls button {
-    height: 35px;
+    height: 40px;
     width: 80px;
+    margin-right: 8px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+}
+
+.controls button:hover:enabled {
+    transition: box-shadow 0.3s ease;
+    box-shadow: 0 0 5px 2px #C0C0C0;
+    cursor: pointer;
+}
+
+button:disabled {
+    color: rgb(150, 150, 150);
 }
 
 #selectFileDialog,

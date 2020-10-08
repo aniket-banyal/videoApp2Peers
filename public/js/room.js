@@ -1,3 +1,4 @@
+//audio not wokring if video on, video off then mute and then other user joins and then u unmute
 myPeer.on('open', id => {
     socket.emit('join-room', ROOM_ID, id, myUserName)
     myUserId = id
@@ -19,16 +20,17 @@ myPeer.on('connection', conn => {
 
 
 navigator.mediaDevices.getUserMedia({
-        video: false,
-        audio: true
+        video: myVideoOn,
+        audio: audioOn
     }).then(stream => {
         myStream = stream
             //connect to new user whose id is userId and send ur stream
         socket.on('user-connected', (userId, userName) => {
             peerUserId = userId
             peerUserName = userName
+            peerName.innerHTML = peerNameFallback.innerHTML = peerUserName
             connectToNewUser(userId, myStream)
-            peerVideo.parentElement.style.display = ''
+
             shareScreenBtn.disabled = false
             shareFileBtn.disabled = false
             whiteboardBtn.disabled = false
@@ -38,7 +40,8 @@ navigator.mediaDevices.getUserMedia({
 
         myVideo.srcObject = myStream
         myVideo.muted = true
-        myName.innerHTML = myUserName
+        myName.innerHTML = myNameFallback.innerHTML = myUserName
+        myName.style.opacity = 0
 
         setEventListeners()
 
@@ -67,10 +70,7 @@ function setEventListeners() {
     audioBtn.addEventListener('click', toggleAudio)
 
     shareScreenBtn.addEventListener('click', () => {
-        if (sharingScreen)
-            stopScreenShare()
-        else
-            shareScreen()
+        sharingScreen ? stopScreenShare() : shareScreen()
     })
 
     shareFileBtn.addEventListener('click', () => {
@@ -101,27 +101,32 @@ function setEventListeners() {
     })
 
     openChatBtn.addEventListener('click', () => {
-        let w = getComputedStyle(chatWindow).getPropertyValue('--chatWindowWidth')
-        chatWindow.style.opacity = 1
-        chatWindow.style.left = `calc(100vw - ${w})`
-        videoGrid.style.marginRight = w
-        openChatBtn.style.display = 'none'
-        chatInput.focus()
-        chatWindow.style.boxShadow = '0 0 10px 2px #C0C0C0'
+        if (!chatOpen) {
+            let w = getComputedStyle(chatWindow).getPropertyValue('--chatWindowWidth')
+            chatWindow.style.opacity = 1
+            chatWindow.style.left = `calc(100vw - ${w})`
+            videoGrid.style.marginRight = w
+            chatInput.focus()
+            notificationCount = 0
+            notificationBubble.innerHTML = ''
 
-        if (peerSharingScreen)
-            videoGrid.style.gridTemplateColumns = '1fr'
+            if (peerSharingScreen)
+                videoGrid.style.gridTemplateColumns = '1fr'
+            chatOpen = true
+
+        } else closeChatBtn.click()
     })
 
     closeChatBtn.addEventListener('click', () => {
         chatWindow.style.opacity = 0
         chatWindow.style.left = '100vw'
         videoGrid.style.marginRight = 0
-        openChatBtn.style.display = ''
-        chatWindow.style.boxShadow = ''
+        notificationCount = 0
+        notificationBubble.innerHTML = ''
 
         if (peerSharingScreen)
             videoGrid.style.gridTemplateColumns = '10fr 1fr'
+        chatOpen = false
     })
 
     chatInput.oninput = () => {

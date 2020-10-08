@@ -8,6 +8,7 @@ function connectToNewUser(userId, stream) {
         call = myPeer.call(userId, stream)
         handleCall(call)
         myVideoOn ? connection.send('video') : connection.send('noVideo')
+        peerVideo.parentElement.style.opacity = 1
     })
 
     connection.on('data', data => {
@@ -20,17 +21,17 @@ function connectToNewUser(userId, stream) {
 function handleConnectionData(data) {
     if (data == 'noVideo') {
 
-        peerVideo.style.display = 'none'
-        peerNameFallback.innerHTML = peerUserName
-        peerNameFallback.parentElement.style.background = 'black'
-        peerName.innerHTML = ''
+        peerVideo.style.opacity = 0
+        peerName.style.opacity = 0
+        peerNameFallback.style.opacity = 1
+        peerNameFallback.parentElement.style.background = '#5a5a5a'
 
     } else if (data == 'video') {
 
-        peerNameFallback.innerHTML = ''
-        peerNameFallback.parentElement.style.background = ''
-        peerVideo.style.display = ''
-        peerName.innerHTML = peerUserName
+        peerVideo.style.opacity = 1
+        peerName.style.opacity = 1
+        peerNameFallback.style.opacity = 0
+        peerNameFallback.parentElement.style.background = 'none'
 
     } else if (data == 'sharingScreen') {
 
@@ -38,12 +39,14 @@ function handleConnectionData(data) {
         videoBtn.disabled = true
         shareScreenBtn.disabled = true
         whiteboardBtn.disabled = true
-        peerNameFallback.innerHTML = ''
-        peerName.innerHTML = ''
-        peerVideo.style.display = ''
+        peerVideo.style.opacity = 1
+        peerNameFallback.style.opacity = 0
+        peerName.style.opacity = 1
         peerNameFallback.parentElement.style.background = ''
+        myVideo.parentElement.style.opacity = 0
+            //need to make display none or it'll still take up space
         myVideo.parentElement.style.display = 'none'
-        videoGrid.style.gridTemplateColumns = '10fr 1fr'
+        videoGrid.style.gridTemplateColumns = '1fr'
         peerVideo.style.maxHeight = '100%'
             //stop my video if other user is sharing screen
         stopMyVideo()
@@ -61,7 +64,7 @@ function handleConnectionData(data) {
         if (myVideoOn) {
             navigator.mediaDevices.getUserMedia({
                 video: true,
-                audio: true
+                audio: audioOn
             }).then(stream => {
                 myStream = stream
                 myVideo.srcObject = myStream
@@ -71,12 +74,15 @@ function handleConnectionData(data) {
         }
         //this should come after the above if, otherwise if peer's video was originally off and he turns off
         //screen share and then turns on his video then u'll see the last frame of screen share
+        myVideo.parentElement.style.opacity = 1
         myVideo.parentElement.style.display = ''
+
 
     } else if (data.hasOwnProperty('id') && data.hasOwnProperty('userName')) {
 
         peerUserName = data['userName']
         peerUserId = data['id']
+        peerName.innerHTML = peerNameFallback.innerHTML = peerUserName
 
     } else if (data.hasOwnProperty('name') && data.hasOwnProperty('size')) {
 
@@ -105,13 +111,19 @@ function handleConnectionData(data) {
         downloadFile(blob, data['name'])
 
     } else if (data.hasOwnProperty('msg')) {
+
         createMsg('peerMsg', data['msg'])
+        if (!chatOpen) {
+            notificationCount++
+            notificationBubble.innerHTML = notificationCount
+        }
+
     } else if (data == 'whiteboardOn') {
 
         window.addEventListener('resize', onResize, false)
         context.clearRect(0, 0, canvas.width, canvas.height)
         canvas.style.display = ''
-        videoGrid.style.display = 'none'
+        videoGrid.style.opacity = 0
         videoBtn.disabled = true
         shareScreenBtn.disabled = true
         whiteboardBtn.disabled = true
@@ -121,7 +133,7 @@ function handleConnectionData(data) {
     } else if (data == 'whiteboardOff') {
 
         canvas.style.display = 'none'
-        videoGrid.style.display = ''
+        videoGrid.style.opacity = 1
         videoBtn.disabled = false
         shareScreenBtn.disabled = false
         whiteboardBtn.disabled = false
@@ -129,7 +141,7 @@ function handleConnectionData(data) {
         if (myVideoOn) {
             navigator.mediaDevices.getUserMedia({
                 video: true,
-                audio: true
+                audio: audioOn
             }).then(stream => {
                 myStream = stream
                 myVideo.srcObject = myStream
@@ -156,9 +168,9 @@ function handleCall(call) {
 }
 
 function onPeerDisconnect() {
-    peerVideo.style.display = 'none'
+    peerVideo.style.opacity = 0
     peerName.innerHTML = ''
-    peerVideo.parentElement.style.display = 'none'
+    peerVideo.parentElement.style.opacity = 0
     peerNameFallback.innerHTML = ''
 
     sendMsgBtn.disabled = true

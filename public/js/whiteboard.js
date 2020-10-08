@@ -4,7 +4,7 @@ function startWhiteboard() {
     whiteboardBtn.innerHTML = 'Stop Whiteboard'
     context.clearRect(0, 0, canvas.width, canvas.height)
     canvas.style.display = ''
-    videoGrid.style.display = 'none'
+    videoGrid.style.opacity = 0
 
     canvas.addEventListener('mousedown', onMouseDown, false)
     canvas.addEventListener('mouseup', onMouseUp, false)
@@ -30,7 +30,7 @@ function stopWhiteboard() {
     shareScreenBtn.disabled = false
 
     canvas.style.display = 'none'
-    videoGrid.style.display = ''
+    videoGrid.style.opacity = 1
 
     canvas.removeEventListener('mousedown', onMouseDown, false)
     canvas.removeEventListener('mouseup', onMouseUp, false)
