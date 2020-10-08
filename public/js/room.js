@@ -28,8 +28,9 @@ navigator.mediaDevices.getUserMedia({
         socket.on('user-connected', (userId, userName) => {
             peerUserId = userId
             peerUserName = userName
+            peerName.innerHTML = peerNameFallback.innerHTML = peerUserName
             connectToNewUser(userId, myStream)
-            peerVideo.parentElement.style.display = ''
+
             shareScreenBtn.disabled = false
             shareFileBtn.disabled = false
             whiteboardBtn.disabled = false
@@ -39,7 +40,8 @@ navigator.mediaDevices.getUserMedia({
 
         myVideo.srcObject = myStream
         myVideo.muted = true
-        myName.innerHTML = myUserName
+        myName.innerHTML = myNameFallback.innerHTML = myUserName
+        myName.style.opacity = 0
 
         setEventListeners()
 
@@ -68,10 +70,7 @@ function setEventListeners() {
     audioBtn.addEventListener('click', toggleAudio)
 
     shareScreenBtn.addEventListener('click', () => {
-        if (sharingScreen)
-            stopScreenShare()
-        else
-            shareScreen()
+        sharingScreen ? stopScreenShare() : shareScreen()
     })
 
     shareFileBtn.addEventListener('click', () => {

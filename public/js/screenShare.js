@@ -37,12 +37,16 @@ async function shareScreen() {
 
         //If i start sharing screen, turn off my video
         stopMyVideo()
+        myVideo.style.opacity = 0
+        myName.style.opacity = 0
+        myNameFallback.style.opacity = 1
+        myNameFallback.parentElement.style.background = '#5a5a5a'
 
         //If i start sharing screen, peers video will be turned off so do this
-        peerVideo.style.display = 'none'
-        peerNameFallback.innerHTML = peerUserName
-        peerNameFallback.parentElement.style.background = 'black'
-        peerName.innerHTML = ''
+        peerVideo.style.opacity = 0
+        peerName.style.opacity = 0
+        peerNameFallback.style.opacity = 1
+        peerNameFallback.parentElement.style.background = '#5a5a5a'
     } catch (e) {
         console.log(e, 'Please select a screen to share')
     }

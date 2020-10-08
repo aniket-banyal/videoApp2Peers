@@ -25,14 +25,15 @@
 <body>
     <div id="videoGrid">
 
-        <div class='videoHolder' id="peerVideo">
+        <div class='videoHolder' id="peerDiv">
             <video autoplay></video>
-            <h1></h1>
+            <h1 class='nameFallback'></h1>
             <h3 class='name'></h3>
         </div>
 
-        <div class='videoHolder' id="myVideo">
+        <div class='videoHolder' id="myDiv">
             <video autoplay></video>
+            <h1 class='nameFallback'></h1>
             <h3 class='name'></h3>
         </div>
 
@@ -53,7 +54,6 @@
 
     <div id='chatWindow' style='opacity: 0;'>
         <a href="javascript:void(0)" class="closebtn">×</a>
-        <!-- <h1>Chat</h1> -->
         <div id="chats"></div>
         <div class="chatFooter">
             <input type="text" id="chatInput">

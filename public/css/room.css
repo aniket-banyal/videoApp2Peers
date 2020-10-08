@@ -18,10 +18,10 @@ body {
     padding: 10px 20px;
     grid-template-columns: 3fr 1fr;
     grid-template-rows: 1fr 1fr;
-    grid-template-areas: 'peerVideo myVideo' 'peerVideo .';
+    grid-template-areas: 'peerDiv myDiv' 'peerDiv .';
     row-gap: 10px;
     column-gap: 20px;
-    transition: margin 0.4s ease;
+    transition: margin 0.4s ease, opacity 0.5s ease;
 }
 
 .videoHolder {
@@ -32,12 +32,28 @@ body {
     max-height: 88vh;
 }
 
-#myVideo {
-    grid-area: myVideo;
+#myDiv {
+    grid-area: myDiv;
+    background: #5a5a5a;
 }
 
-#peerVideo {
-    grid-area: peerVideo;
+#peerDiv {
+    grid-area: peerDiv;
+}
+
+#myDiv,
+#peerDiv {
+    position: relative;
+    transition: background 0.5s ease, opacity 0.5s ease;
+}
+
+.nameFallback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    transform: opacity 0.5s ease;
 }
 
 #openChatBtn {
@@ -134,24 +150,14 @@ body {
 video {
     width: 100%;
     max-height: 88vh;
+    transition: opacity 0.5s ease
     /* object-fit: cover; */
-}
-
-#peerVideo {
-    position: relative;
-}
-
-#peerVideo h1 {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
 }
 
 .name {
     font-weight: 100;
     color: white;
+    transition: opacity 0.3s ease;
 }
 
 .controls {
@@ -181,7 +187,7 @@ video {
 }
 
 button:disabled {
-    color: rgb(210, 210, 210);
+    color: rgb(150, 150, 150);
 }
 
 #selectFileDialog,

@@ -23,16 +23,17 @@ let chatOpen = false
 
 let notificationCount = 0
 
-const myVideo = document.querySelector('#myVideo video')
-const myName = document.querySelector('#myVideo .name')
+const myVideo = document.querySelector('#myDiv video')
+const myName = document.querySelector('#myDiv .name')
+const myNameFallback = document.querySelector('#myDiv .nameFallback')
 let myUserId
 let myStream
 let myVideoOn = false
 let sharingScreen = false
 
-const peerVideo = document.querySelector('#peerVideo video')
-const peerName = document.querySelector('#peerVideo .name')
-const peerNameFallback = document.querySelector('#peerVideo h1')
+const peerVideo = document.querySelector('#peerDiv video')
+const peerName = document.querySelector('#peerDiv .name')
+const peerNameFallback = document.querySelector('#peerDiv .nameFallback')
 let peerUserId
 let peerUserName
 let peerSharingScreen = false
